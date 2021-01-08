@@ -16,7 +16,7 @@ if input("Make PULL attempt based on Company/Report/Dates? (y/n): ") == 'y':
     Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
     dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
     igor_tools.search_company(Company, Report_Type, int(dates[0]), int(dates[1]))
-    print(f"See generated files in working directory for output. ")
+
 
 #h_list contains .htmls that need to be accessed and appended to get the final .html address for the specified report(s)
 #

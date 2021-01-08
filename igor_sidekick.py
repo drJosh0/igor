@@ -32,6 +32,35 @@ def _is_num(n):
         return False
 
 
+def html_to_list(html_file):
+    with open(html_file) as file:
+        soup = BeautifulSoup(file, 'html.parser')
+
+    locator = 'div table tr td p'
+    dollar_regex = '[0-9]*,*[0-9]*,*[0-9]+'
+
+    item = soup.select(locator)
+    lines = []
+
+    for i in item:
+        if i.string is None:
+            pass
+        elif i.contents[0] == '\n':
+            pass
+        else:
+            line = str(i.contents[0])  # convert single element list to string
+            line = line.replace('\n', '').replace('  ', '').replace('(', '').replace(')', '')  # strip string characters
+            lines.append(line.strip())
+
+    while '' in lines:
+        lines.remove('')
+    while '—' in lines:
+        lines.remove('—')
+    while '$' in lines:
+        lines.remove('$')
+    return lines
+
+
 def structure(list):
     key_temp = []
     val_temp = []
@@ -45,6 +74,7 @@ def structure(list):
             #print(f'{i} is a number')
             val_temp.append(i)
     return dict(zip(key_temp, val_temp))
+
 
 def monies(string):
     dollar_regex = '[0-9]*,*[0-9]*,*[0-9]+'

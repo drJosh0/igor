@@ -100,10 +100,12 @@ def _save_htm(list_of_htms, pageFolder):
         response = requests.get(u)
         url = response.url
         soup = BeautifulSoup(response.text, 'html.parser')
-        with open(output_path + '/' + pageFolder + '/' + str(file_num) + '.html', 'w') as file:
+        total_path = output_path + '/' + pageFolder + '/' + str(file_num) + '.html'
+        with open(total_path, 'w') as file:
             file.write(soup.prettify())
         file_num += 1
-
+    print(f"See generated files in directory: {output_path + '/' + pageFolder}")
+    return output_path + '/' + pageFolder
 
 def _filename_list(date_range_start: int, date_range_end: int):
     current_year = datetime.now().year
@@ -145,14 +147,8 @@ def search_company(company: str, report_type: str = '10-Q', date_range_start: in
         os.makedirs(output_path)
     output_folder = company.replace(' ', '_').replace(',', '').replace('/', '-') + "_" + report_type + "_" + str(date_range_start) + "-" + str(date_range_end)
     #save individual html files
-    _save_htm(htm_list, output_folder)
+    filePath = _save_htm(htm_list, output_folder)
 
-    #save list of htms to txt
-    output_filename = company.replace(' ','_').replace(',','').replace('/','-') + "_" + report_type + "_" + str(date_range_start) + "-" + str(date_range_end) + ".txt"
-    with open(output_path+'/'+output_filename, 'w') as file:
-        for line in htm_list:
-            file.write(line)
-            file.write('\n')
     return htm_list
 
 
