@@ -14,6 +14,7 @@ import os, os.path, sys
 import edgar
 import pandas
 import requests
+import igor_sidekick
 
 from urllib.parse import urljoin
 from datetime import datetime, timezone
@@ -100,7 +101,8 @@ def _save_htm(list_of_htms, pageFolder):
         response = requests.get(u)
         url = response.url
         soup = BeautifulSoup(response.text, 'html.parser')
-        total_path = output_path + '/' + pageFolder + '/' + str(file_num) + '.html'
+        s_file_num = '{:03}'.format(file_num)
+        total_path = output_path + '/' + pageFolder + '/' + s_file_num + '.html'
         with open(total_path, 'w') as file:
             file.write(soup.prettify())
         file_num += 1
@@ -149,6 +151,10 @@ def search_company(company: str, report_type: str = '10-Q', date_range_start: in
     #save individual html files
     filePath = _save_htm(htm_list, output_folder)
 
+    os.chdir(filePath) #drill into output folder
+    for file in [x for x in os.listdir()]:
+        igor_sidekick.html_to_list(file)
+        #
     return htm_list
 
 
