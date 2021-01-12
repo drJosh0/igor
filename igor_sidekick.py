@@ -63,7 +63,24 @@ def html_to_list(html_file): #will need to os.chdir() to the output folder
     return lines
 
 
-def structure(list):
+def structure(list): #delete all dat prior to first month
+    months = {'January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'}
+    reg = '(\S)*'
+    for i in range(len(list)):  #
+        string = re.search(reg, list[i])
+        try:
+            string = {string.group(0)}
+        except:
+            pass
+        if string.intersection(months):
+            print('*************************found first month.')
+            del list[:i]
+            break
+
+    return list
+
+
+def structureB(list):
     key_temp = []
     val_temp = []
     for i in list:
