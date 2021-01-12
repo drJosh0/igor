@@ -19,8 +19,12 @@ if input("Make PULL attempt based on Company/Report/Dates? (y/n): ") == 'y':
     dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
     outputPath = igor_tools.report_download(Company, Report_Type, int(dates[0]), int(dates[1]))
 
+
+if input("Sidekick test? (y/n)") == 'y':
+    outputPath = os.getcwd()+'/'+'output'+'/'+'Tesla_Inc._10-Q_2019-2020'
     os.chdir(outputPath)  # drill into output folder
-    for file in [x for x in os.listdir()]:
+    file_list = os.listdir().sort()
+    for file in [x for x in file_list]:
         igor_sidekick.html_to_list(file)
 
 

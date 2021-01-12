@@ -58,6 +58,8 @@ def html_to_list(html_file): #will need to os.chdir() to the output folder
         lines.remove('—')
     while '$' in lines:
         lines.remove('$')
+    print('...processing {}'.format(html_file))
+    print(lines)
     return lines
 
 
