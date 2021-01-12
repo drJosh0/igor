@@ -139,7 +139,7 @@ def _filename_list_to_html(list_of_files, company, report_type):
         _write_to_log(f"Retrieved {company} - {report_type} from {file} | IGOR revision: {igor_version}")
     return html_list
 
-def search_company(company: str, report_type: str = '10-Q', date_range_start: int = datetime.now().year-1, date_range_end: int = datetime.now().year):
+def report_download(company: str, report_type: str = '10-Q', date_range_start: int = datetime.now().year-1, date_range_end: int = datetime.now().year):
     filename_list = _filename_list(date_range_start, date_range_end)
     html_list = _filename_list_to_html(filename_list, company, report_type)
     htm_list = _html_to_htm(html_list, report_type)
@@ -151,11 +151,9 @@ def search_company(company: str, report_type: str = '10-Q', date_range_start: in
     #save individual html files
     filePath = _save_htm(htm_list, output_folder)
 
-    os.chdir(filePath) #drill into output folder
-    for file in [x for x in os.listdir()]:
-        igor_sidekick.html_to_list(file)
+
         #
-    return htm_list
+    return output_path
 
 
 

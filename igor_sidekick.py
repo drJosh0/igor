@@ -32,7 +32,7 @@ def _is_num(n):
         return False
 
 
-def html_to_list(html_file):
+def html_to_list(html_file): #will need to os.chdir() to the output folder
     with open(html_file) as file:
         soup = BeautifulSoup(file, 'html.parser')
 
