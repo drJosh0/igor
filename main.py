@@ -15,9 +15,10 @@ if input('Download new data? (y/n)  ') == 'y':
 #test case for attempting to get years/qtrs out of date range
 if input("Make PULL attempt based on Company/Report/Dates? (y/n): ") == 'y':
     Company = input("Input company name to pull (must match exact string as recorded by SEC): ")
+    C = igor_tools.adv_search(Company)
     Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
     dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
-    outputPath = igor_tools.report_download(Company, Report_Type, int(dates[0]), int(dates[1]))
+    outputPath = igor_tools.report_download(C, Report_Type, int(dates[0]), int(dates[1]))
 
 
 if input("Sidekick test? (y/n)") == 'y':
@@ -25,8 +26,8 @@ if input("Sidekick test? (y/n)") == 'y':
     os.chdir(outputPath)  # drill into output folder
     file_list = os.listdir().sort()
     for file in [x for x in file_list]:
-        igor_sidekick.html_to_list(file)
-
+        fmt = igor_sidekick.html_to_list(file)
+        data = igor_sidekick.structure(fmt)
 
 #h_list contains .htmls that need to be accessed and appended to get the final .html address for the specified report(s)
 #

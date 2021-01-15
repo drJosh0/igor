@@ -56,8 +56,36 @@ def _tsv_format(filename):
     return output
 
 def adv_search(search_string):
-    #search and return possible matches to input string
-    pass
+    search_string = set({search_string})
+    os.chdir(data_path)
+    filenames = os.listdir()
+    filenames.sort()
+
+    search1 = _tsv_format(filenames[-1]) #get last filename -- should be the most current date
+    search2 = _tsv_format(filenames[-2])
+
+    matches = set()
+    for i in range(len(search1)):
+        company = set(search1[i]['Company'].lower().replace(',', '').split(' '))
+        if search_string.intersection(company):
+            matches.add(search1[i]['Company'])
+    for i in range(len(search1)):  #need to loop serially should either file have a diff number of rows
+        company = set(search2[i]['Company'].lower().replace(',', '').split(' '))
+        if search_string.intersection(company):
+            matches.add(search2[i]['Company'])  #.add to same set to get a unique list
+
+    print(matches)
+    match = list(matches) #convert to list to make callable
+    if len(match) > 1: #user needs to select company name to search on
+        user_index = input('Provide index of correct search criteria <<{}>> (N): '.format(match))
+        return match[int(user_index)]
+    elif len(match) == 1:
+        return match[0]
+    else:
+        print('Unexpected error in ADV SEARCH')
+        raise ValueError
+
+
 
 
 def _calc_financials(raw_data_dict):
