@@ -14,8 +14,8 @@ if input('Download new data? (y/n)  ') == 'y':
 
 #test case for attempting to get years/qtrs out of date range
 if input("Make PULL attempt based on Company/Report/Dates? (y/n): ") == 'y':
-    Company = input("Input company name to pull (must match exact string as recorded by SEC): ")
-    C = igor_tools.adv_search(Company)
+    Company = input("Input search term(s) for COMPANY (comma separated): ")
+    C = igor_tools._adv_search(Company)
     Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
     dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
     outputPath = igor_tools.report_download(C, Report_Type, int(dates[0]), int(dates[1]))

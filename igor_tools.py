@@ -8,15 +8,14 @@ QUERY API: https://api.sec-api.io
 STREAMING API: https://api.sec-api.io:3334/all-filings
 
 '''
-igor_version = '2021-01-06'
+igor_version = '2021-01-15'
 
-import os, os.path, sys
+import os, os.path
 import edgar
 import pandas
 import requests
 import igor_sidekick
 
-from urllib.parse import urljoin
 from datetime import datetime, timezone
 from bs4 import BeautifulSoup
 
@@ -55,29 +54,35 @@ def _tsv_format(filename):
 
     return output
 
-def adv_search(search_string):
-    search_string = set({search_string})
+def _adv_search(search_string_in):
+    string = search_string_in.split(',')
+    string = [element.strip(' ') for element in string] #remove any leading/trailing spaces
+    search_string = set(string)
+
     os.chdir(data_path)
     filenames = os.listdir()
     filenames.sort()
-
-    search1 = _tsv_format(filenames[-1]) #get last filename -- should be the most current date
-    search2 = _tsv_format(filenames[-2])
+    filenames.reverse()
 
     matches = set()
-    for i in range(len(search1)):
-        company = set(search1[i]['Company'].lower().replace(',', '').split(' '))
-        if search_string.intersection(company):
-            matches.add(search1[i]['Company'])
-    for i in range(len(search1)):  #need to loop serially should either file have a diff number of rows
-        company = set(search2[i]['Company'].lower().replace(',', '').split(' '))
-        if search_string.intersection(company):
-            matches.add(search2[i]['Company'])  #.add to same set to get a unique list
+    while len(matches) < 1:  #iterate over .tsv's until finding at least 1 match
 
-    print(matches)
+        for f in filenames:
+            print('looking in <<{}>>'.format(f))
+            single_tsv = _tsv_format(f)
+
+            for i in range(len(single_tsv)):
+                company = set(single_tsv[i]['Company'].lower().replace(',', '').split(' '))
+                if search_string.intersection(company):
+                    matches.add(single_tsv[i]['Company'])
+            filenames.pop(0)
+            break #go back to while loop to determine if it is worth looking in another tsv file
+
+    print('Found match(es): {}\n'.format(matches))
     match = list(matches) #convert to list to make callable
     if len(match) > 1: #user needs to select company name to search on
         user_index = input('Provide index of correct search criteria <<{}>> (N): '.format(match))
+        print('Using Value: {}'.format(match[int(user_index)]))
         return match[int(user_index)]
     elif len(match) == 1:
         return match[0]
@@ -85,7 +90,18 @@ def adv_search(search_string):
         print('Unexpected error in ADV SEARCH')
         raise ValueError
 
+def _adv_report(Company: str): #pull all available reports for a given company and output to an organized series of folders output/adv_search/Company/ --> year/report_type.html
+    adv_company = _adv_search(Company) #get company name as listed in .tsv files
 
+    #iterate over all .tsv files
+        #iterate over all lines in single .tsv file
+            #if company, set.add(report_type)
+            #process .html address
+            #save .html to directory: output/year/report_type_QTR#.html ---- pull year & QTR# from .tsv filename
+
+
+
+    pass
 
 
 def _calc_financials(raw_data_dict):
