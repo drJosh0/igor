@@ -5,7 +5,8 @@ data_path = os.getcwd()+'/data'
 log_path = os.getcwd()+'/logs'
 output_path = os.getcwd()+'/output'
 
-
+def _init_prompt():
+    print('Sidekick test')
 
 def _not_num(n):
     try:
