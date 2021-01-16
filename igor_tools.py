@@ -245,9 +245,13 @@ def _filename_list_to_html(list_of_files, company, report_type):
         for item in dict_:
             if item['Company'] == company and item['Filing Type'] == report_type:
                 html_list.append(base_url+item['Data File html'].strip('\n'))
-        if count > 5:
-            print('Could not find REPORT TYPE <<{}>> in first 5 attempts'.format(report_type))
-            break
+        if count > 4:
+            user = input('Could not find REPORT TYPE <<{}>> in 5 attempts --> continue? (y/n):'.format(report_type))
+            if user == 'n':
+                break
+            elif user == 'y':
+                count = 0
+
         count += 1
         _write_to_log(f"Retrieved {company} - {report_type} from {file} | IGOR revision: {igor_version}")
     return html_list
