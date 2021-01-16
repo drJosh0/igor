@@ -1,8 +1,6 @@
 import igor_tools
 import igor_sidekick
 
-#Company = 'Tesla, Inc.'
-#Report_Type = '10-K'
 
 user = 0
 

@@ -8,7 +8,7 @@ QUERY API: https://api.sec-api.io
 STREAMING API: https://api.sec-api.io:3334/all-filings
 
 '''
-igor_version = '2021-01-15'
+igor_version = '2021-01-16'
 
 import os, os.path, re
 import edgar
