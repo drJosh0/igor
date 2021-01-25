@@ -252,6 +252,7 @@ def _filename_list_to_html(list_of_files, company, report_type):
             elif user == 'y':
                 count = 0
 
+
         count += 1
         _write_to_log(f"Retrieved {company} - {report_type} from {file} | IGOR revision: {igor_version}")
     return html_list
