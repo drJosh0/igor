@@ -245,7 +245,7 @@ def _filename_list_to_html(list_of_files, company, report_type):
         for item in dict_:
             if item['Company'] == company and item['Filing Type'] == report_type:
                 html_list.append(base_url+item['Data File html'].strip('\n'))
-        if count > 4:
+        if count > 4 and len(html_list) < 0:
             user = input('Could not find REPORT TYPE <<{}>> in 5 attempts --> continue? (y/n):'.format(report_type))
             if user == 'n':
                 break
