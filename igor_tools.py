@@ -25,12 +25,12 @@ output_path = os.getcwd()+'/output'
 
 def _init_prompt():
     user = input(
-    '''\nActive instance of IGOR: What would you like to do??
-    d - download new data from SEC?
-    s - search existing local files?
-    t - test BETA tools
-    q - quit program
-    \n''')
+'''\nActive instance of IGOR: What would you like to do??
+d - download new data from SEC?
+s - search existing local files?
+t - test BETA tools
+q - quit program
+\n''')
     return user
 
 def download_prompt():
@@ -42,7 +42,11 @@ def download_prompt():
 def search_prompt():
     Company = input("Input search term(s) for COMPANY (comma separated): ")
     C = _adv_search(Company)
-    Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
+    Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K) or 'X' to find available report types: ").upper()
+    if Report_Type == 'X':
+        _adv_report(C) #search through most recent 4 tsv files (1 calendar year) and get all filing types for that company
+        Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
+
     dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
     outputPath = report_download(C, Report_Type, int(dates[0]), int(dates[1]))
 
@@ -112,38 +116,19 @@ def _adv_search(search_string_in):
         print('Unexpected error in ADV SEARCH')
         raise ValueError
 
-def _adv_report(Company: str, year_range): #pull all available reports for a given company and output to an organized series of folders output/adv_search/Company/ --> year/report_type.html
-    os.chdir(data_path)
-    years = year_range.split('-')
 
-    year_regex = '([0-9])+'
-    qtr_regex = '([A-Z]+[0-9]+)'
+def _adv_report(Company: str): #pull all available reports for a given company and output to an organized series of folders output/adv_search/Company/ --> year/report_type.html
+    available_reports = set()
+    recent_tsvs = os.listdir(data_path)
+    recent_tsvs.sort(reverse=True)
+    list_tsv = recent_tsvs[0:3]
+    for tsv in list_tsv:
+        for line in _tsv_format(tsv):
+            if line['Company'] == Company:
+                available_reports.add(line['Filing Type'])
 
-
-    adv_company = _adv_search(Company) #get company name as listed in .tsv files
-    list_of_files = _filename_list(int(years[0]), int(years[1]))
-    base_url = 'https://www.sec.gov/Archives/'
-    for f in list_of_files:    #iterate over all .tsv files in year_range
-        Y, Q = re.search(year_regex, f).group(0), re.search(qtr_regex, f).group(0)
-        f2 = _tsv_format(f)
-        empty = []
-        html_list = []
-        for line in f2:  #iterate over all lines in single .tsv file
-            if line['Company'] == adv_company: #if company, set.add(report_type)
-                empty.append = line['Filing Type']
-                html_list.append(base_url + line['Data File html'].strip('\n'))
-
-        for html in html_list:
-            D = html_retrieve(html, adv_company) #return a dict with list of all reports for a given company
-
-            for item in D['html List']:
-                path_s = output_path+'/'+item['Company']+'_'+Y
-                save_f = Q+'_'+item['Report List']
-                if not os.path.exists(log_path):
-                    os.makedirs(log_path)
-                save_page(item, save_path='', save_filename='')
-            #save .html to directory: output/year/report_type_QTR#.html ---- pull year & QTR# from .tsv filename
-    print('Saved files to <<{}>>'.format(path_s))
+        ar = list(enumerate(available_reports))
+    return [print(x) for x in ar]
 
 
 def _html_to_htm(list_of_htmls, report_type: str = '10-Q'): #default report = 10-Q
@@ -234,7 +219,7 @@ def html_retrieve(filename, company):  #return all htmls for all reports for a g
     return dict(zip(keys, vals))
 
 
-def _filename_list_to_html(list_of_files, company, report_type):
+def _filename_list_to_html(list_of_files, company, report_type): #take in list of tsv filenames, company, and report type to search
     html_list = []
     count = 1
     base_url = 'https://www.sec.gov/Archives/'
