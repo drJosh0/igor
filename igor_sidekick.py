@@ -13,34 +13,33 @@ class Report:
         with open(html_file) as file:
             self.soup = BeautifulSoup(file, 'html.parser')
 
+    @property
+    def summary(self):
+        locator = 'table'
+        item = self.soup.find_all(locator)
+
+        for everything in item:
+            tmpTable = []
+            table = everything.text.replace('\n', '').replace('$', '').replace('—', '').split('  ')
+            for i in table:
+                if i != '':  # empty strings are still persistent for some reason?
+                    tmpTable.append(i.strip())
+            comparison = set(tmpTable[:9])
+            comp = {'ASSETS', 'assets', 'Assets'}
+            if comparison.intersection(comp):  # find the first table that intersects with 'comp'
+                break  # tmpTable
+
+        keys, vals = [], []
+        for i in range(1, len(tmpTable)):
+            if _is_dollars(tmpTable[i]) and _is_not_dollars(tmpTable[i - 1]):
+                keys.append(tmpTable[i - 1])
+                vals.append(int(tmpTable[i].replace(',', '')))
+        sumTable = dict(zip(keys, vals))
+        return sumTable
 
     @property
     def fundamentals(self):  # return a dict of summary tables
-        # locator = 'div table tr'
-        locator = 'tr'
-        item = self.soup.find_all(locator)
-
-        lines = []
-
-        for i in item:
-            if i.string is None:
-                pass
-            elif i.contents[0] == '\n':
-                pass
-            else:
-                line = str(i.contents[0])  # convert single element list to string
-                line = line.replace('\n', '').replace('  ', '').replace('(', '').replace(')', '').replace('\xa0',' ')  # strip string characters
-                lines.append(line.strip())
-
-        while '' in lines:
-            lines.remove('')
-        while '—' in lines:
-            lines.remove('—')
-        while '$' in lines:
-            lines.remove('$')
-        print('...processing {}'.format(self.file))
-
-        return item
+        pass
 
     @property
     def techSector(self):
@@ -147,5 +146,6 @@ def filter_year(string):
         value = 'Year:' + match.group()  # add to year to make string != number
         return value
     return string
+
 
 #
