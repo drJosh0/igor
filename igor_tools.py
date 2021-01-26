@@ -45,10 +45,10 @@ def search_prompt():
     Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K) or 'X' to find available report types: ").upper()
     if Report_Type == 'X':
         _adv_report(C) #search through most recent 4 tsv files (1 calendar year) and get all filing types for that company
-        Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K)").upper()
-    else:
-        dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
-        outputPath = report_download(C, Report_Type, int(dates[0]), int(dates[1]))
+        Report_Type = input("Enter report type of interest (i.e. 10-Q or 10-K): ").upper()
+
+    dates = input("Input date range for data pull (YYYY-YYYY): ").split('-')
+    outputPath = report_download(C, Report_Type, int(dates[0]), int(dates[1]))
 
 
 def _write_to_log(message: str):

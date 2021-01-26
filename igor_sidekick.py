@@ -1,6 +1,6 @@
 import re, os, os.path
 from bs4 import BeautifulSoup
-global output_path
+
 
 data_path = os.getcwd() + '/data'
 log_path = os.getcwd() + '/logs'
