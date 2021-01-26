@@ -103,11 +103,12 @@ def _adv_search(search_string_in):
                     matches.add(single_tsv[i]['Company'])
             filenames.pop(0)
             break #go back to while loop to determine if it is worth looking in another tsv file
+    match = list(matches)  # convert to list to make callable
+    print('\nFound match(es): ')  #\n{}\n'.format(list(enumerate(matches))))
+    [print(x) for x in list(enumerate(matches))]
 
-    print('Found match(es): {}\n'.format(matches))
-    match = list(matches) #convert to list to make callable
     if len(match) > 1: #user needs to select company name to search on
-        user_index = input('Provide index of correct search criteria <<{}>> (N): '.format(match))
+        user_index = input('Provide index of correct search criteria <<N>>: ')
         print('Using Value: {}'.format(match[int(user_index)]))
         return match[int(user_index)]
     elif len(match) == 1:
@@ -236,7 +237,6 @@ def _filename_list_to_html(list_of_files, company, report_type): #take in list o
                 break
             elif user == 'y':
                 count = 0
-
 
         count += 1
         _write_to_log(f"Retrieved {company} - {report_type} from {file} | IGOR revision: {igor_version}")
