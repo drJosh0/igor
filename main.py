@@ -1,7 +1,7 @@
 import igor_tools
-from igor_sidekick import Report
+import igor_sidekick
 import os
-
+output_path = os.getcwd() + '/output'
 
 user = 0
 
@@ -12,7 +12,17 @@ while user != 'q':
     elif user == 's':
         igor_tools.search_prompt()
     elif user == 't':
-        igor_sidekick._init_prompt()
+        user2 = igor_sidekick._sidekick_prompt()
+        if user2 == 'l':
+            print(os.listdir(output_path))
+        elif user2 == 'c':
+            print('do things')
+        elif user2 == 't':
+            print('test 123')
+        elif user2 == 'e':
+            print('Exiting Program...')
+        else:
+            print('Unsupported action <<{}>> Try again'.format(user))
     elif user == 'q':
         print('\n##### Shutting down IGOR instance #####\n')
     else:
