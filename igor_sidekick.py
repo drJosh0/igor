@@ -1,4 +1,5 @@
 import re, os, os.path
+import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 
 
@@ -18,8 +19,6 @@ def _sidekick_prompt():
         your input: ''')
 
     return user
-#
-
 
 
 class Report:
@@ -48,10 +47,11 @@ class Report:
         keys, vals = [], []
         for i in range(1, len(tmpTable)):
             if _is_dollars(tmpTable[i]) and _is_not_dollars(tmpTable[i - 1]):
-                keys.append(tmpTable[i - 1])
-                vals.append(int(tmpTable[i].replace(',', '')))
+                keys.append(tmpTable[i - 1].upper())
+                vals.append(float(tmpTable[i].replace(',', '')))
         sumTable = dict(zip(keys, vals))
-        return sumTable
+        return sumTable #output a dictionary with key/values that are from the summary table of a 10-q
+
 
     @property
     def fundamentals(self):  # return a dict of summary tables

@@ -8,7 +8,6 @@ QUERY API: https://api.sec-api.io
 STREAMING API: https://api.sec-api.io:3334/all-filings
 
 '''
-igor_version = '2021-01-16'
 
 import os, os.path, re
 import edgar
@@ -51,16 +50,6 @@ def search_prompt():
     outputPath = report_download(C, Report_Type, int(dates[0]), int(dates[1]))
 
 
-def _write_to_log(message: str):
-    #method for debugging purposed, log critical events: date of last download, queries made, etc.
-    if not os.path.exists(log_path):
-        os.makedirs(log_path)
-        with open(log_path+'/log.txt', 'w'):
-            print('initiated log file.')
-    with open(log_path+'/log.txt', 'a') as file:
-        date = str(datetime.now(timezone.utc))
-        file.write(date + '    ' + message + '\n')
-
 
 def _download(year: int):
     #download large .tsv files containing all listed filings per qtr
@@ -69,7 +58,6 @@ def _download(year: int):
         os.makedirs(data_path)
     edgar.download_index(data_path, year, skip_all_present_except_last=False)
     print("Downloading financial data")
-    _write_to_log("***** Downloaded New Data {} to present *****".format(year))
     return os.listdir(data_path)
 
 
@@ -90,6 +78,7 @@ def _adv_search(search_string_in):
     filenames.sort()
     filenames.reverse()
 
+    count = 1
     matches = set()
     while len(matches) < 1:  #iterate over .tsv's until finding at least 1 match
 
@@ -103,6 +92,10 @@ def _adv_search(search_string_in):
                     matches.add(single_tsv[i]['Company'])
             filenames.pop(0)
             break #go back to while loop to determine if it is worth looking in another tsv file
+        if count > 5:
+            break  # if there are no matches after searching all files in data_path
+        count += 1
+
 
     print('Found match(es): {}\n'.format(matches))
     match = list(matches) #convert to list to make callable
@@ -113,7 +106,7 @@ def _adv_search(search_string_in):
     elif len(match) == 1:
         return match[0]
     else:
-        print('Unexpected error in ADV SEARCH')
+        print('Unexpected error in ADV SEARCH - most likely could not find company name provided')
         raise ValueError
 
 
@@ -220,8 +213,7 @@ def html_retrieve(filename, company):  #return all htmls for all reports for a g
 
 
 def _filename_list_to_html(list_of_files, company, report_type): #take in list of tsv filenames, company, and report type to search
-    html_list = []
-    count = 1
+    html_list, count = [], 1
     base_url = 'https://www.sec.gov/Archives/'
 
     for file in list_of_files:
@@ -238,7 +230,6 @@ def _filename_list_to_html(list_of_files, company, report_type): #take in list o
                 count = 0
 
         count += 1
-        _write_to_log(f"Retrieved {company} - {report_type} from {file} | IGOR revision: {igor_version}")
     return html_list
 
 def report_download(company: str, report_type: str = '10-Q', date_range_start: int = datetime.now().year-1, date_range_end: int = datetime.now().year):
