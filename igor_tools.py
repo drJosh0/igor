@@ -249,7 +249,3 @@ def report_download(company: str, report_type: str = '10-Q', date_range_start: i
     return output_path
 
 
-
-
-
-#

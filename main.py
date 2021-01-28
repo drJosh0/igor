@@ -41,10 +41,3 @@ while user != 'q':
 
 
 
-'''
-os.chdir('/home/hjk/PycharmProjects/Igor/output/Virgin_Galactic_Holdings_Inc_10-Q_2018-2020')
-data = Report('001.html')
-
-everything = data.fundamentals
-
-'''
